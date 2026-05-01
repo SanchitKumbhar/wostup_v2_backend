@@ -1,0 +1,17 @@
+module.exports = {
+  User: require("./users.model"),
+  Workspace: require("./workspaces.model"),
+  WorkspaceMember: require("./workspaceMembers.model"),
+  Project: require("./projects.model"),
+  Milestone: require("./milestones.model"),
+  Task: require("./tasks.model"),
+  Update: require("./updates.model"),
+  Activity: require("./activities.model"),
+  Notification: require("./notifications.model"),
+  StartupProgress: require("./startupProgress.model"),
+  AuthAccount: require("./authAccounts.model"),
+  AuthSession: require("./authSessions.model"),
+  AuthRefreshToken: require("./authRefreshTokens.model"),
+  AuthPasswordResetToken: require("./authPasswordResetTokens.model"),
+  AuthEmailVerificationToken: require("./authEmailVerificationTokens.model"),
+};

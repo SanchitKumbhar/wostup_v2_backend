@@ -1,0 +1,17 @@
+converting notification service from normal req-res to websockets realtime notifications
+check all the error statuscode 
+dont expose auth statuscode keep a common status code for it
+add all required routes middleware
+on_cascade for deletion process
+
+-----------------------------------------------------------------------
+filter for projects based on statuses
+filter for tasks based on statuses and members and priority
+invite service/api
+main dashboard
+
+---------------------------------------------------------------------
+AI Agents:
+continous monitoring triggers using redis pubsub
+AI project planner
+AI automated recommended patching

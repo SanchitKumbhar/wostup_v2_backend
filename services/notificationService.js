@@ -1,0 +1,72 @@
+const { Notification } = require("../models/index");
+
+const getNotificationsByUserService = async (workspaceId, recipientUserId) => {
+    try {
+        const notifications = await Notification.find({ 
+            workspaceId, 
+            recipientUserId 
+        }).sort({ timestamp: -1 });
+        
+        return { statuscode: 200, data: notifications };
+    } catch (error) {
+        return { statuscode: 500, message: error.message };
+    }
+};
+
+const markNotificationAsReadService = async (notificationId, recipientUserId) => {
+    try {
+        const notification = await Notification.findOneAndUpdate(
+            { _id: notificationId, recipientUserId },
+            { read: true },
+            { new: true }
+        );
+
+        if (!notification) {
+            return { statuscode: 404, message: "Notification not found" };
+        }
+
+        return { statuscode: 200, data: notification };
+    } catch (error) {
+        return { statuscode: 500, message: error.message };
+    }
+};
+
+const deleteNotificationService = async (notificationId, recipientUserId) => {
+    try {
+        const result = await Notification.deleteOne({ 
+            _id: notificationId, 
+            recipientUserId 
+        });
+
+        if (result.deletedCount === 0) {
+            return { statuscode: 404, message: "Notification not found" };
+        }
+
+        return { statuscode: 200, message: "Notification deleted" };
+    } catch (error) {
+        return { statuscode: 500, message: error.message };
+    }
+};
+
+const createNotificationService = async (workspaceId, recipientUserId, message, type) => {
+    try {
+        const notification = await Notification.create({
+            workspaceId,
+            recipientUserId,
+            message,
+            type,
+            timestamp: new Date(),
+            read: false
+        });
+        return { statuscode: 201, data: notification };
+    } catch (error) {
+        return { statuscode: 500, message: error.message };
+    }
+};
+
+module.exports = {
+    getNotificationsByUserService,
+    markNotificationAsReadService,
+    deleteNotificationService,
+    createNotificationService
+};
