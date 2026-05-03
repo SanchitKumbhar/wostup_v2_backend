@@ -1,4 +1,8 @@
 module.exports = (io, pubClient) => {
+    if (!pubClient) {
+        console.log("⚠️  Redis not available. Online presence tracking disabled.");
+        return;
+    }
 
     io.on("connection", (socket) => {
         console.log("Socket connected:", socket.id);
