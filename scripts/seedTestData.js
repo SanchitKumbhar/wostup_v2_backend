@@ -1,4 +1,6 @@
-require("dotenv").config();
+const path = require("path");
+
+require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
@@ -11,10 +13,6 @@ const {
   Project,
   Milestone,
   Task,
-  Update,
-  Activity,
-  Notification,
-  StartupProgress,
   AuthAccount,
   AuthSession,
   AuthRefreshToken,
@@ -41,14 +39,10 @@ async function clearAllData() {
     AuthPasswordResetToken,
     AuthEmailVerificationToken,
     AuthAccount,
-    Notification,
-    Activity,
-    Update,
     Task,
     Milestone,
     Project,
     WorkspaceMember,
-    StartupProgress,
     Workspace,
     User,
   ];
@@ -125,32 +119,44 @@ async function seedUsersAndAuth() {
     createdAt: new Date(),
   });
 
+  const refreshToken = crypto.randomBytes(32).toString("hex");
+  const refreshTokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
   await AuthRefreshToken.create({
     userId: founder._id,
-    tokenHash: crypto.randomBytes(32).toString("hex"),
+    tokenHash: refreshTokenHash,
     sessionId: session._id,
     expiresAt: daysFromNow(14),
     revokedAt: null,
     createdAt: new Date(),
   });
 
+  const passwordResetToken = crypto.randomBytes(32).toString("hex");
+  const passwordResetTokenHash = crypto.createHash("sha256").update(passwordResetToken).digest("hex");
   await AuthPasswordResetToken.create({
     userId: users[3]._id,
-    tokenHash: crypto.randomBytes(32).toString("hex"),
+    tokenHash: passwordResetTokenHash,
     expiresAt: daysFromNow(1),
     usedAt: null,
     createdAt: new Date(),
   });
 
+  const emailVerificationToken = crypto.randomBytes(32).toString("hex");
+  const emailVerificationTokenHash = crypto.createHash("sha256").update(emailVerificationToken).digest("hex");
   await AuthEmailVerificationToken.create({
     userId: users[3]._id,
-    tokenHash: crypto.randomBytes(32).toString("hex"),
+    tokenHash: emailVerificationTokenHash,
     expiresAt: daysFromNow(2),
     verifiedAt: null,
     createdAt: new Date(),
   });
 
-  return users;
+  return {
+    users,
+    sessionToken: session.sessionToken,
+    refreshToken,
+    passwordResetToken,
+    emailVerificationToken,
+  };
 }
 
 async function seedWorkspaceData(users) {
@@ -181,11 +187,11 @@ async function seedWorkspaceData(users) {
   });
 
   await WorkspaceMember.insertMany([
-    { workspaceId: workspace._id, userId: founder._id, role: "owner", joinedAt: daysAgo(120) },
-    { workspaceId: workspace._id, userId: productManager._id, role: "admin", joinedAt: daysAgo(90) },
-    { workspaceId: workspace._id, userId: developer._id, role: "member", joinedAt: daysAgo(60) },
-    { workspaceId: workspace._id, userId: designer._id, role: "viewer", joinedAt: daysAgo(30) },
-    { workspaceId: sideWorkspace._id, userId: founder._id, role: "owner", joinedAt: daysAgo(15) },
+    { workspaceId: workspace._id, userId: founder._id, role: "owner", assignedTasks: [], joinedAt: daysAgo(120) },
+    { workspaceId: workspace._id, userId: productManager._id, role: "admin", assignedTasks: [], joinedAt: daysAgo(90) },
+    { workspaceId: workspace._id, userId: developer._id, role: "member", assignedTasks: [], joinedAt: daysAgo(60) },
+    { workspaceId: workspace._id, userId: designer._id, role: "viewer", assignedTasks: [], joinedAt: daysAgo(30) },
+    { workspaceId: sideWorkspace._id, userId: founder._id, role: "owner", assignedTasks: [], joinedAt: daysAgo(15) },
   ]);
 
   const projects = await Project.insertMany([
@@ -428,100 +434,12 @@ async function seedWorkspaceData(users) {
     },
   ]);
 
-  await Update.insertMany([
-    {
-      workspaceId: workspace._id,
-      authorUserId: founder._id,
-      title: "Fundraising narrative tightened",
-      content: "Updated deck storyline and refined problem-solution framing.",
-      type: "update",
-      timestamp: daysAgo(2),
-    },
-    {
-      workspaceId: workspace._id,
-      authorUserId: productManager._id,
-      title: "Analytics schema approved",
-      content: "Event taxonomy has been reviewed and approved.",
-      type: "milestone",
-      timestamp: daysAgo(1),
-    },
-  ]);
-
-  await Activity.insertMany([
-    {
-      workspaceId: workspace._id,
-      userId: founder._id,
-      action: "Updated task",
-      target: "Draft final deck copy",
-      type: "task",
-      timestamp: daysAgo(1),
-    },
-    {
-      workspaceId: workspace._id,
-      userId: productManager._id,
-      action: "Added comment",
-      target: "Build analytics events table",
-      type: "comment",
-      timestamp: daysAgo(1),
-    },
-  ]);
-
-  const notifications = await Notification.insertMany([
-    {
-      workspaceId: workspace._id,
-      recipientUserId: developer._id,
-      message: "You have been assigned: Implement dashboard cards",
-      type: "task",
-      timestamp: new Date(),
-      read: false,
-    },
-    {
-      workspaceId: workspace._id,
-      recipientUserId: designer._id,
-      message: "Milestone due soon: Visual Direction",
-      type: "milestone",
-      timestamp: new Date(),
-      read: false,
-    },
-    {
-      workspaceId: workspace._id,
-      recipientUserId: founder._id,
-      message: "New comment on Build analytics events table",
-      type: "comment",
-      timestamp: new Date(),
-      read: true,
-    },
-  ]);
-
-  await StartupProgress.create({
-    workspaceId: workspace._id,
-    stage: "traction",
-    weeklyFocus: "Improve activation rate and tighten onboarding funnel.",
-    metrics: [
-      {
-        metricKey: "weekly_active_users",
-        name: "Weekly Active Users",
-        current: "142",
-        target: "220",
-        unit: "users",
-      },
-      {
-        metricKey: "activation_rate",
-        name: "Activation Rate",
-        current: "34.5",
-        target: "45",
-        unit: "%",
-      },
-    ],
-  });
-
   return {
     workspace,
     sideWorkspace,
     projects,
     milestones,
     tasks,
-    notifications,
     users,
   };
 }
@@ -534,8 +452,8 @@ async function run() {
   await clearAllData();
 
   console.log("Seeding fresh test data...");
-  const users = await seedUsersAndAuth();
-  const seeded = await seedWorkspaceData(users);
+  const authSeed = await seedUsersAndAuth();
+  const seeded = await seedWorkspaceData(authSeed.users);
 
   const summary = {
     users: seeded.users.length,
@@ -543,13 +461,15 @@ async function run() {
     projects: seeded.projects.length,
     milestones: seeded.milestones.length,
     tasks: seeded.tasks.length,
-    notifications: seeded.notifications.length,
     testPassword: TEST_PASSWORD,
     mainWorkspaceId: seeded.workspace._id.toString(),
     secondaryWorkspaceId: seeded.sideWorkspace._id.toString(),
     sampleProjectId: seeded.projects[1]._id.toString(),
     sampleTaskId: seeded.tasks[2]._id.toString(),
-    sampleNotificationId: seeded.notifications[0]._id.toString(),
+    sessionToken: authSeed.sessionToken,
+    refreshToken: authSeed.refreshToken,
+    passwordResetToken: authSeed.passwordResetToken,
+    emailVerificationToken: authSeed.emailVerificationToken,
   };
 
   console.log("Seed complete.");

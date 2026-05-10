@@ -8,7 +8,6 @@ module.exports = {
   Update: require("./updates.model"),
   Activity: require("./activities.model"),
   Notification: require("./notifications.model"),
-  StartupProgress: require("./startupProgress.model"),
   AuthAccount: require("./authAccounts.model"),
   AuthSession: require("./authSessions.model"),
   AuthRefreshToken: require("./authRefreshTokens.model"),

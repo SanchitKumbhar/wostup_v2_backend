@@ -5,6 +5,13 @@ const workspaceMemberSchema = new mongoose.Schema(
     workspaceId: { type: mongoose.Schema.Types.ObjectId, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, required: true },
     role: { type: String, enum: ["owner", "admin", "member", "viewer"], required: true },
+    assignedTasks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Task",
+        required: true
+      }
+    ],
     joinedAt: { type: Date, required: true, default: Date.now },
   },
   {

@@ -19,6 +19,8 @@ async function startServer() {
 
     // ✅ Socket logic
     require("./onlinePresence/workspacePresence.js")(io, pubClient);
+    require("./sockets/notificationSocket.js")(io, pubClient);
+    require("./sockets/updateSocket.js")(io, pubClient);
 
     // ✅ START ONLY ONE SERVER
     server.listen(PORT, () => {
