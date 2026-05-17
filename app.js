@@ -12,7 +12,6 @@ const taskRoutes = require("./routes/taskRoutes");
 const taskHealthRoutes = require("./routes/taskHealthRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const workspaceRoutes = require("./routes/workspaceRoutes");
-const notificationRoutes = require("./routes/notificationRoutes");
 const projectHealthRoutes = require("./routes/projectHealthRoutes");
 const teamLoadRoutes = require("./routes/teamLoadRoutes");
 
@@ -39,7 +38,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/task-health", taskHealthRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/workspaces", workspaceRoutes);
-app.use("/api/notifications", notificationRoutes);
+// Notifications are handled via WebSockets now; HTTP routes removed.
 app.use("/api/projectHealth", projectHealthRoutes);
 app.use("/api/team-load", teamLoadRoutes);
 

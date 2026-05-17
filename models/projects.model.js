@@ -11,6 +11,12 @@ const projectSchema = new mongoose.Schema(
     progress: { type: Number, required: true, min: 0, max: 100 },
     dueDate: { type: Date, required: true },
     deletedAt: { type: Date, default: null },
+    LOGS:{
+    AISummary: { type: String, default: "" },
+    ExecutionSummary: [{ type: String, default: "" }],
+    Suggestions: [{ type: String, default: "" }],
+    RiskAssessment: [{ type: String, default: "" }],
+    }
   },
   {
     collection: "projects",

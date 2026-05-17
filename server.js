@@ -33,8 +33,9 @@ async function startServer() {
     // Socket logic
     console.log("🔌 Setting up Socket.IO...");
     require("./onlinePresence/workspacePresence.js")(io, pubClient);
+    require("./sockets/notificationSocket.js")(io, pubClient);
+    require("./sockets/updateSocket.js")(io, pubClient);
     console.log("✅ Socket.IO setup complete");
-
     // START ONLY ONE SERVER
     server.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);

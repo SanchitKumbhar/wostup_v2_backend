@@ -1,4 +1,4 @@
-const { Notification } = require("../models/index");
+const { Notification, WorkspaceMember } = require("../models/index");
 
 const getNotificationsByUserService = async (workspaceId, recipientUserId) => {
     try {
@@ -50,6 +50,12 @@ const deleteNotificationService = async (notificationId, recipientUserId) => {
 
 const createNotificationService = async (workspaceId, recipientUserId, message, type) => {
     try {
+        // validate recipient is a member of the workspace
+        const member = await WorkspaceMember.findOne({ workspaceId, userId: recipientUserId });
+        if (!member) {
+            return { statuscode: 400, message: "Recipient is not a member of the workspace" };
+        }
+
         const notification = await Notification.create({
             workspaceId,
             recipientUserId,
