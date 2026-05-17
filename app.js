@@ -20,17 +20,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ CREATE SERVER HERE
+// CREATE SERVER HERE
 const server = http.createServer(app);
 
-// ✅ NOW PASS IT
+// NOW PASS IT
 const io = new Server(server, {
   cors: { origin: "*" }
 });
 
 // routes
 app.use("/", healthRoutes);
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/teamMember", teamRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/milestones", milestoneRoutes);
@@ -48,5 +48,5 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: "Internal server error" });
 });
 
-// ✅ EXPORT EVERYTHING
+// EXPORT 
 module.exports = { app, server, io };

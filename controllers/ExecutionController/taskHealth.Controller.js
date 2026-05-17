@@ -27,7 +27,7 @@ const taskHealthSummaryController = async_handler(async (req, res) => {
     const result = await taskHealthServices.getTaskHealthSummaryService({
         workspaceId,
         projectId,
-        userId: req.auth.userId,
+        userId: req.auth?.userId || null,
     });
 
     if (result.status !== 200) {
@@ -49,7 +49,7 @@ const taskHealthBoardController = async_handler(async (req, res) => {
     const result = await taskHealthServices.getTaskHealthBoardService({
         workspaceId,
         projectId,
-        userId: req.auth.userId,
+        userId: req.auth?.userId || null,
 
     });
 
@@ -82,8 +82,7 @@ const taskHealthDashboardController = async_handler(async (req, res) => {
         projectId,
         projectIds,
         projects,
-        // userId: req.auth.userId,
-        userId: "69e89fd4a78c9e8f37a03781",
+        userId: req.auth?.userId || null,
 
     });
 

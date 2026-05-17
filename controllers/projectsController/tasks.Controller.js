@@ -1,5 +1,12 @@
 const async_handler = require("express-async-handler");
-const TaskServices = require("../../services/taskService");
+const {
+    createTaskService,
+    updateTaskService,
+    taskDeleteService,
+    taskGetByIdService,
+    taskGetAllService,
+    taskFilterService,
+} = require("../../services/taskService");
 
 
 const createTaskController = async_handler(async (req, res) => {
@@ -11,7 +18,7 @@ const createTaskController = async_handler(async (req, res) => {
     const { workspaceId, title, titile, description, status, actualProgress, assigneeUserId, projectId, milestoneId, dueDate } = req.body;
     const resolvedTitle = title || titile;
 
-    const { statuscode, data } = await TaskServices.createTaskService(
+    const { statuscode, data } = await createTaskService(
         workspaceId,
         resolvedTitle,
         description,
@@ -41,7 +48,7 @@ const updateTaskController = async_handler(async (req, res) => {
         return res.status(400).json({ messgae: "body or task id not provided" });
 
     }
-    const { statuscode, data } = await TaskServices.updateTaskService(
+    const { statuscode, data } = await updateTaskService(
         req.params.taskId,
         req.auth.userId,
         req.body
@@ -68,7 +75,7 @@ const getTaskByIdController = async_handler(async (req, res) => {
             "message": "Task Id not provided"
         });
     }
-    const { statuscode, data } = await TaskServices.taskGetByIdService(req.params.taskId);
+    const { statuscode, data } = await taskGetByIdService(req.params.taskId);
     if (statuscode == 404) {
         return res.status(404).json({
             "message": "Task not found"
@@ -86,7 +93,7 @@ const getAllTaskController = async_handler(async (req, res) => {
         });
     }
 
-    const { statuscode, data } = await TaskServices.taskGetAllService(req.params.projectId);
+    const { statuscode, data } = await taskGetAllService(req.params.projectId);
     if (statuscode == 404) {
         return res.status(404).json({
             "message": "Task not found"
@@ -104,7 +111,7 @@ const deleteTaskController = async_handler(async (req, res) => {
             "message": "Task Id not provided"
         });
     }
-    const { statuscode, data } = await TaskServices.taskDeleteService(req.params.taskId, req.auth.userId);
+    const { statuscode, data } = await taskDeleteService(req.params.taskId, req.auth.userId);
 
     if (statuscode == 200) {
         return res.status(200).json({
@@ -141,7 +148,7 @@ const filterTaskController = async_handler(async (req, res) => {
         return res.status(400).json({ message: "status or user id not provided" });
     }
 
-    const { statuscode, data } = await TaskServices.taskFilterService(status, userid);
+    const { statuscode, data } = await taskFilterService(status, userid);
     return res.status(statuscode || 200).json({ data: data });
 })
 

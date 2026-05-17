@@ -1,4 +1,4 @@
-const { User, WorkspaceMember } = require("../models/index");
+const { User, Workspace, WorkspaceMember } = require("../models/index");
 
 async function createTeamMemberService(workspaceId, email, memberName, role, skills) {
     // 1. Find or create user
@@ -48,12 +48,16 @@ async function createTeamMemberService(workspaceId, email, memberName, role, ski
     };
 };
 
-async function viewBoardService(req,workspaceId) {
-    const totalMembers = await WorkspaceMember.countDocuments({ workspaceId });
-    const count = await req.app.locals.pubClient.sCard("online_users");
-    const offlineCount=totalMembers-count;
+async function viewBoardService(workspaceId) {
+    const workspace = await Workspace.findById(workspaceId);
 
-    return {totalMembers,count,offlineCount};
+    if (!workspace) {
+        return { statuscode: 404, data: null };
+    }
+
+    const data = await WorkspaceMember.find({ workspaceId }).lean();
+
+    return { statuscode: 200, data };
 }
 
 module.exports = { createTeamMemberService, viewBoardService };  

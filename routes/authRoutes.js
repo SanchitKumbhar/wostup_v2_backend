@@ -22,6 +22,6 @@ router.post("/password-reset/reset", passwordResetController.resetPasswordHandle
 
 // Session and refresh token routes
 router.post("/refresh-token", sessionRefreshController.refreshTokenHandler); // refresh token
-router.post("/logout", sessionRefreshController.logoutHandler); // logout
+router.post("/logout", authMiddleware, sessionRefreshController.logoutHandler); // logout
 
 module.exports = router;

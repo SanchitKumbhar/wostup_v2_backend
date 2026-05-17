@@ -10,12 +10,12 @@ const {
 } = require("../controllers/ExecutionController/taskHealth.Controller");
 
 // router.post("/v1/task-health", authMiddleware, taskHealthController);
-router.get("/v1/summary", taskHealthSummaryController);
+router.get("/v1/summary", authMiddleware, taskHealthSummaryController);
 
 // not required probably as v1/dashboard giving both
-router.get("/v1/board", taskHealthBoardController);
+router.get("/v1/board", authMiddleware, taskHealthBoardController);
 
 
-router.get("/v1/dashboard", taskHealthDashboardController);
+router.get("/v1/dashboard", authMiddleware, taskHealthDashboardController);
 
 module.exports = router;

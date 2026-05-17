@@ -20,9 +20,13 @@ const viewBoard=async_handler(async(req,res)=>{
     if(!req.params.workspaceId){
         return res.status(400).json({message:"wrokspaceid not provided"});
     }
-    const result=await TeamMemberService.viewBoardService(req,req.params.workspaceId);
+    const { statuscode, data } = await TeamMemberService.viewBoardService(req.params.workspaceId);
 
-    return res.status(200).json({data:result});
+    if (statuscode == 404) {
+        return res.status(404).json({ message: "workspace not found" });
+    }
+
+    return res.status(200).json({data});
 })
 
 module.exports = { createTeamMember ,viewBoard};
