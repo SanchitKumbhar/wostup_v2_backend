@@ -100,12 +100,11 @@ async function taskGetAllService(projectId) {
     return { statuscode: 200, data };
 }
 
-// filterSerivce
-async function filterTaskService(status,userid){
-    const data = Task.findById({status:status,assigneeUserId,userid});
-    if(!data){
-        return 404;
-    }
+async function taskFilterService(status, userid) {
+    const data = await Task.find({
+        status: status,
+        assigneeUserId: userid
+    });
 
     return { statuscode: 200, data };
 }
@@ -116,6 +115,6 @@ module.exports = {
     taskDeleteService,
     taskGetByIdService,
     taskGetAllService,
-    filterTaskService
+    taskFilterService
 }
 

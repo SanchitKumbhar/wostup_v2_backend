@@ -1,7 +1,4 @@
 
-
-
-
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
@@ -39,6 +36,7 @@ const userSchema = new mongoose.Schema(
 
     deletedAt: { type: Date, default: null },
 
+    // Numeric counter for token invalidation (increment to invalidate all tokens)
     token_version: {
       type: Number,
       default: 0,

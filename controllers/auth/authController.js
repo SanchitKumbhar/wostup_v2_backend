@@ -10,7 +10,7 @@ async function register(req, res) {
     const result = await authService.register(req.body || {});
     return res.status(result.status).json(result.body);
   } catch (err) {
-    console.error("REGISTER ERROR:", err); // 🔥 shows real issue in terminal
+    console.error("REGISTER ERROR:", err); // shows real issue in terminal
 
     return res.status(500).json({
       error: err.message || "Registration failed",
